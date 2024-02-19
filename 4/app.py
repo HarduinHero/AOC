@@ -1,28 +1,24 @@
-WIN = 'win'
-CANDIDATE = 'candidate'
-
-def parse(rawData) :
-
+def solveP1(rawData) :
     result = []
     for rawCard in rawData :
-        _, numbers = rawCard.replace('\n', '').replace('  ', ' ').split(':')
-        matcher = r'^Card\s+\d+:((\s+\d+)+)\s\|((\s+(\d+))+)$'
-        print(numbers)
+        left, right = rawCard.replace('\n', '').replace('  ', ' ').split(':')[1].split(' | ')
+        wining = set(left.split(' ')[1::])
+        candidates = set(right.split(' '))
+        result.append(len(wining.intersection(candidates)))
+    return result
 
+def solveP2(wincounts) :
+    cardCount = [1 for _ in range(len(wincounts))]
+    for cardIndex in range(len(cardCount)) :
+        for i in range(wincounts[cardIndex]) :
+            cardCount[cardIndex+i+1] += cardCount[cardIndex]
+    return cardCount
 
-
-
-def solveP1(rawData) :
-    parse(rawData)
-
-
-
-
-
-
-
-path = 'kinput.txt'
+path = 'input.txt'
 with open(path, 'r') as file :
     rawData = file.readlines()
 
-solveP1(rawData)
+print(solveP1(rawData))
+print(solveP2(solveP1(rawData)))
+print('part1 : ', sum([int(2**(i-1)) for i in solveP1(rawData)]))
+print('part2 : ', sum(solveP2(solveP1(rawData))))
