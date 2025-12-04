@@ -59,7 +59,7 @@ Ceci est un rapport sur ma solution au puzzle **{day:02d}** de l'https://advento
 == Partie 1
 == Partie 2
 """
-INDEX_TABLE_LINE = "|{day:02d} |Titre |``_ _`` |link:{workdirname}/README.adoc[Voir]"
+INDEX_TABLE_LINE = "|{day:02d} |Titre |``_ _`` |link:{year}/{workdirname}/README.adoc[Voir]"
 
 #############################################
 #####               HELPER              #####  

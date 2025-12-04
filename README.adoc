@@ -11,9 +11,16 @@
 |===
 |Jour |Titre |Stars |Lien
 4.+^|**2025**
-|01 |Secret Entrance |``* *`` |link:2025_01/README.adoc[Voir]
-|02 |Gift Shop |``* *`` |link:2025_02/README.adoc[Voir]
-|03 |Lobby |``* *`` |link:2025_03/README.adoc[Voir]
+|01 |Secret Entrance |``* *`` |link:2025/2025_01/README.adoc[Voir]
+|02 |Gift Shop |``* *`` |link:2025/2025_02/README.adoc[Voir]
+|03 |Lobby |``* *`` |link:2025/2025_03/README.adoc[Voir]
+4.+^|**2023**
+|01 |Trebuchet?! |``* *`` |link:2023/2023_01/README.adoc[Voir]
+|02 |Cube Conundrum |``* *`` |link:2023/2023_02/README.adoc[Voir]
+|03 |Gear Ratios |``* *`` |link:2023/2023_03/README.adoc[Voir]
+|04 |Scratchcards |``* *`` |link:2023/2023_04/README.adoc[Voir]
+|05 |If You Give A Seed A Fertilizer |``* *`` |link:2023/2023_05/README.adoc[Voir]
+|06 |Wait For It |``* *`` |link:2023/2023_06/README.adoc[Voir]
 |===
 
 == Utils
