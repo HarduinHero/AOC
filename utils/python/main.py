@@ -52,7 +52,7 @@ README = """= AoC {year} - Jour {day:02d} : <Titre>
 :source-highlighter: pygments
 :imagesdir: img
 
-link:../README.adoc[HOME]
+link:../../README.adoc[HOME]
 
 Ceci est un rapport sur ma solution au puzzle **{day:02d}** de l'https://adventofcode.com[Advent Of Code {year}].
 

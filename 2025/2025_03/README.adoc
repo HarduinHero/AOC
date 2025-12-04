@@ -6,7 +6,7 @@
 :source-highlighter: pygments
 :imagesdir: img
 
-link:../README.adoc[HOME]
+link:../../README.adoc[HOME]
 
 Ceci est un rapport sur ma solution au puzzle **03** de l'https://adventofcode.com[Advent Of Code 2025].
 
