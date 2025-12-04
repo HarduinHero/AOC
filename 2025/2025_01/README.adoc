@@ -1,0 +1,218 @@
+= AoC 2025 - Jour 1 : Secret Entrance
+:autor: Harduin_Hero
+:toc: left
+:toc-title: Sommaire
+:stem: latexmath
+:source-highlighter: pygments
+:imagesdir: img
+
+link:../README.adoc[HOME]
+
+Ceci est un rapport sur ma solution au puzzle **01** de l'https://adventofcode.com[Advent Of Code 2025].
+
+== Partie 1
+=== Rotations
+Dans ce puzzle, on est confronté à un cadran de coffre fort comportant 100 positions (0 à 99). 
+
+L'entré est une liste de rotation du cadran. Ces rotations sont représenté comme des chaines de caractère de forme ``[RL][0-9]+`` (ex: R4, L90, R420, L69). Dans ces chaines, la lettre indique le sens de rotation du cadran et le nombre, la quantitée de mouvement dans ce sens (le nombre de position dont on s'est déplacé).
+
+Le cadran indique une valeur. +
+La valeur/position initial du cadran est ``50``. +
+Tourner vers la **droite**, ``R``, **augmente** la valeur. +
+Tourner vers la **gauche**, ``L``, **diminue** la valeur. +
+
+[.text-center]
+.Représentation simplifié du cadran.
+image::diag-cadran.jpg[width=350, align="center"]
+
+On peut donc interpréter une rotation comme un scallaire entier dont le signe est déterminé par le sens de rotation.
+
+Examples :
+
+* stem:[R4\Leftrightarrow+4] 
+* stem:[L90\Leftrightarrow-90] 
+* stem:[R420\Leftrightarrow+420] 
+* stem:[L69\Leftrightarrow-69] 
+
+On crée donc une petite fonction pour faire cela.
+
+.Fonction d'interprétation des rotation
+[source, python]
+----
+def rot2int(rotation:str) -> int:
+    return int(rotation[1:]) if rotation[0].lower()=='r' else -int(rotation[1:])
+----
+
+=== Cadran
+
+**Proposition 1** : +
+Effectuer une rotation sur le cadran reviens à ajouter à la position actuel du cadran stem:[P_t], le scallaire stem:[C=rot2int(rotation)]. La nouvelle position apres rotation est stem:[P_{t+1}=prop1(P_t,C)=P_t+C].
+
+[WARNING]
+====
+Problème, cette proposition ne prend pas en compte la cyclicité du cadran dont les valeurs entières sont uniquement comprises dans l'intervale stem:[[[0;99\]\]].
+
+Examples :
+
+* Pour stem:[P_t=2] et stem:[C=-4], stem:[prop1(1,-2)=-2] or stem:[-2\notin[[0;99\]\]]
+* Pour stem:[P_t=98] et stem:[C=4], stem:[prop1(1,-2)=102] or stem:[102\notin[[0;99\]\]]
+====
+
+**Proposition 2** : +
+Pour simplement exprimer cette idée de cyclicité de notre espace numérique stem:[(...,98,99,0,1,2,...,98,99,0,1,...)], on utilise le https://fr.wikipedia.org/wiki/Modulo_(op%C3%A9ration)[modulo]. En réalisant notre déplacement modulo 100, le résultat de notre déplacement est le reste entier de la division entière par 100. Cela permet de rester dans notre intervale stem:[[[0;99\]\]]. +
+La nouvelle position apres rotation est stem:[P_{t+1}=prop2(P_t,C)=P_t+C~mod~100].
+
+Examples :
+
+* Pour stem:[P_t=2] et stem:[C=-4], stem:[prop2(1,-2)=98] et stem:[98\in[[0;99\]\]]
+* Pour stem:[P_t=98] et stem:[C=4], stem:[prop2(1,-2)=2] et stem:[2\in[[0;99\]\]]
+
+.Examples de rotation [P_t=98] et stem:[C=+/-4].
+image::diag-ex_rotation.jpg[width=350, align=center]
+
+=== Compter les zéros
+
+Pour résoudre la première partie, on doit compter le nombre de fois que le cadran a la valeur 0 après une rotation.
+
+.Fonction main, solution de la partie 1 
+[source, python]
+----
+def main_p1(target:str) -> int:
+    dial_pos = 50 <1>
+    output   = 0
+
+    instruction_list = get_filecontent(target)
+
+    for instruction in instruction_list : <2>
+        change = rot2int(instruction)
+        dial_pos = (dial_pos + change) % 100 <3>
+
+        if dial_pos == 0 :
+            output += 1 <4>
+
+    return output
+----
+<1> On initialise le cadran a 50.
+<2> Pour chaque rotation.
+<3> Calcule de la position après rotation.
+<4> On incrémente quand le cadran est à 0.
+
+== Partie 2
+
+Dans cette partie, le problème se complique. Il faut en plus compter à chaque fois que le cadran passe devant zéro lors des rotations.
+
+=== Tourner dans le vide
+
+L'énnoncé souligne bien le fait qu'une instruction de rotation peut engeandrer plusieurs tours. Par example ``R1000`` stem:[1000/100=10] cette rotation fait faire 10 tours complet (100 ticks) au cadran. Et pour chaque tour complet, on passe une fois devant 0. Cette rotation compte donc pour 10. +
+On utilisera la division euclidienne pour trouver le nombre de tours engeandré par une rotation 
+stem:[N_{full\_turn}=|C|~//~100].
+
+[source, python]
+----
+def main_p2(target:str) -> int:
+    dial_pos = 50
+    output   = 0
+
+    instruction_list = get_filecontent(target)
+
+    for instruction in instruction_list :
+        change = rot2int(instruction)
+        increase = 0 <1>
+
+        n_full_turn = abs(change) // 100 <2>
+        increase += n_full_turn <3>
+
+        dial_pos = (dial_pos + change) % 100
+        
+        if dial_pos == 0 :
+            increase += 1 <4>
+
+        output += increase
+
+    return output
+----
+<1> Maintenent qu'il y a plusieurs moyens d'augmenter le compte, on crée une variable intermédiaire pour voir le détail.
+<2> On détermine le nombre de tours complet.
+<3> Chaque tour complet passe une fois par zéro et donc incrémente le compte.
+<4> On continu de compter les arrets sur 0 apres avoir déplacé le cadran.
+
+=== Disjonction
+
+On peut exprime les rotations comme le résultat d'une d'ivision euclidienne, stem:[rotation=C=quotien+reste] où stem:[quotien=N_{full\_turn}]. +
+Et on peut toujours utilisé le meme calcul pour déplacer le cadran stem:[P_{t+1}=P_t+C~mod~100].
+
+On prend en compte le quotien qui représente les tours complets.
+
+On doit encore traiter les cas possible avec le stem:[reste]. Pour traiter cette partie on va faire une disjonction de cas. +
+Pour gérer ces cas nous créons une variable supplémentaire permettant de concerver stem:[P_t] et de le comparer avec stem:[P_{t+1}].
+
+[NOTE]
+Pour chaque cas, on considère que les cas précédent ne sont pas vrai.
+
+[NOTE]
+Pour les cas suivants on a fait stem:[quotien] tours complets.
+
+
+|===
+|Cas |Condition |Description |Action
+
+^.|**1**
+^.|stem:[P_{t+1}=0]
+|Le stem:[reste] place le cadran en position 0.
+|Incrémenter le compte de 1.
+
+^.|**2**
+^.|stem:[P_t=0]
+|La rotation précédente à placé le cadran en position 0. On sait que stem:[reste<100] donc il nepermettra pas de passer 0.
+|Aucune
+
+^.|**3**
+^.|stem:[C > 0] +
+stem:[P_{t+1}<P_t]
+|La rotation augmente la valeur du cadran, mais la nouvelle position est inférieur à la position précédente. On a donc passé 0.
+|Incrémenter le compte de 1.
+
+^.|**4**
+^.|stem:[C < 0] +
+stem:[P_{t+1}>P_t]
+|La rotation diminue la valeur du cadran, mais la nouvelle position est supérieur à la position précédente. On a donc passé 0.
+|Incrémenter le compte de 1.
+|===
+
+.Illustration disjonction de cas.
+image::diag-ex_hop.jpg[align=center]
+
+.Final main function
+[source, python]
+----
+def main_p2(target:str) -> int:
+    dial_pos = 50
+    output   = 0
+
+    instruction_list = get_filecontent(target)
+    for instruction in instruction_list :
+        old_dial_pos = dial_pos <1>
+        change = rot2int(instruction)
+        increase = 0
+
+        n_full_turn = abs(change) // 100
+        increase += n_full_turn
+
+        dial_pos = (dial_pos + change) % 100
+        
+        if dial_pos == 0 :
+            increase += 1
+        elif old_dial_pos == 0 : <2>
+            increase += 0
+        elif change > 0 and dial_pos < old_dial_pos : <3>
+            increase += 1
+        elif change < 0 and dial_pos > old_dial_pos : <4>
+            increase += 1
+
+        output += increase
+    return output
+----
+<1> Nouvelle variable pour suivre stem:[P_{t}].
+<2> Cas 2
+<3> Cas 3
+<4> Cas 4

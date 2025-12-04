@@ -1,0 +1,21 @@
+= Advent of Code
+:autor: Harduin_Hero
+:toc: left
+:toc-title: Sommaire
+:stem: latexmath
+:source-highlighter: pygments
+:imagesdir: img
+
+== Tableau
+[cols="1,~,1,1"]
+|===
+|Jour |Titre |Stars |Lien
+4.+^|**2025**
+|01 |Secret Entrance |``* *`` |link:2025_01/README.adoc[Voir]
+|02 |Gift Shop |``* *`` |link:2025_02/README.adoc[Voir]
+|03 |Lobby |``* *`` |link:2025_03/README.adoc[Voir]
+|===
+
+== Utils
+
+Pour initialiser un nouvel espace de travail, utiliser ``newday.bat``.
