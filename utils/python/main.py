@@ -20,7 +20,7 @@ def main_p1(target:str) -> int :
     
 if __name__ == "__main__" :
 
-    #target = "src/input_ex1.txt"
+    #target = "src/input_ex.txt"
     target = "src/input.txt"
 
     out = main_p1(target)
@@ -38,7 +38,7 @@ def main_p2(target:str) -> int:
 
 if __name__ == "__main__" :
 
-    #target = "src/input_ex1.txt"
+    #target = "src/input_ex.txt"
     target = "src/input.txt"
 
     out = main_p2(target)
@@ -164,9 +164,10 @@ if __name__ == "__main__" :
 
     ## Location definition and validation
     ADVENT_OF_CODE_REPO_ROOT = (Path(__file__) / Path(f"../../..")).resolve()
-    workdir = ADVENT_OF_CODE_REPO_ROOT / dirname
+    yeardir = ADVENT_OF_CODE_REPO_ROOT / str(year)
+    workdir = yeardir / dirname
     srcdir  = workdir / "src"
-    src_files = ["input.txt", "input_ex1.txt", "input_ex2.txt"]
+    src_files = ["input.txt", "input_ex.txt"]
     src_python = srcdir / "python"
     src_python_main1 = src_python / "main_part1.py"
     src_python_main2 = src_python / "main_part2.py"
@@ -174,23 +175,24 @@ if __name__ == "__main__" :
     readme_path = workdir / "README.adoc"
     print(
         f"Next step will create the folowing topography at this path :\n\n" \
-        f"{workdir}\n\n" \
-        f"{dirname}/\n" \
-        f" ┣━ src/\n" \
-        f" ┃   ┣━ input.txt\n" \
-        f" ┃   ┣━ input_ex1.txt\n" \
-        f" ┃   ┣━ input_ex2.txt\n" \
-        f" ┃   ┗━ python/\n" \
-        f" ┃       ┣━ main_part1.py\n" \
-        f" ┃       ┗━ main_part2.py\n" \
-        f" ┣━ img/\n" \
-        f" ┗━ README.adoc"
+        f"{workdir}\n\n"                    \
+        f"{year}\n"                         \
+        f" ┗━ {dirname}/\n"                 \
+        f"     ┣━ src/\n"                   \
+        f"     ┃   ┣━ input.txt\n"          \
+        f"     ┃   ┣━ input_ex.txt\n"      \
+        f"     ┃   ┗━ python/\n"            \
+        f"     ┃       ┣━ main_part1.py\n"  \
+        f"     ┃       ┗━ main_part2.py\n"  \
+        f"     ┣━ img/\n"                   \
+        f"     ┗━ README.adoc"
     )
     if not(yes_no_question("Accept", default_yes=True)) :
         print("-----")
         quit()
 
     ## Topology creation
+    create_dir(yeardir, exist_ok=True)
     create_dir(workdir, exist_ok=True)
     create_dir(srcdir, exist_ok=True)
     for src_file in src_files :
